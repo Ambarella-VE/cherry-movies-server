@@ -3,9 +3,11 @@
     "module": "ES6",
     "esModuleInterop": true,
     "target": "ES6",
+    "rootDir": "src",
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "skipLibCheck": true
   },
   "lib": ["es2015"]
 }
