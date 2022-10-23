@@ -58,13 +58,38 @@ export default class Container {
   }
   /* ---------------- End save ---------------- */
 
+  /* --------------- Begin update --------------- */
+  async update(
+    id: number,
+    element: object
+  ): Promise<any> {
+    try {
+      const data: any = await this.getAll()
+      const elemIndex = data.findIndex((elem: any)=> elem['id'] === id)
+      if (elemIndex){
+        data[elemIndex] = {
+          id: id,
+          ...element
+        }
+        await fs.promises.writeFile(this._fileDir, JSON.stringify(data))
+        cliSuccess(`Object with id ${id} updated!`);
+        return data;
+      }
+    } catch (err: any) {
+      cliError(err['message']);
+    }
+  }
+  /* ---------------- End update ---------------- */
+
   /* -------------- Begin getById ------------- */
   async get(id: number): Promise<any> {
     try {
-      const jsonData = JSON.parse(await fs.promises.readFile(this._fileDir,'utf8'));
-      const filteredData = jsonData.filter((elem: any) => elem['id'] === id);
-      cliSuccess(`Object with id ${id} retrieved!`);
-      return filteredData[0];
+      const data: any = await this.getAll()
+      if (data.length > 0){
+        const element = data.find((elem: any) => elem['id'] === id);
+        cliSuccess(`Object with id ${id} retrieved!`);
+        return element;
+      }
     } catch (err: any) {
       cliError(err['message']);
     }
@@ -86,8 +111,8 @@ export default class Container {
   /* ------------ Begin deleteById ------------ */
   async delete(id: number): Promise<void>{
     try {
-      const jsonData  = JSON.parse(await fs.promises.readFile(this._fileDir,'utf8'));
-      const jsonNewData = jsonData.filter((elem: any) => elem['id'] != id);
+      const data: any = await this.getAll()
+      const jsonNewData = data.filter((elem: any) => elem['id'] != id);
       await fs.promises.writeFile(this._fileDir, JSON.stringify(jsonNewData));
       cliSuccess(`Object with id ${id} deleted!`);
     } catch (err: any) {

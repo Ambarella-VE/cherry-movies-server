@@ -62,14 +62,35 @@ export default class Container {
         });
     }
     /* ---------------- End save ---------------- */
+    /* --------------- Begin update --------------- */
+    update(id, element) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = yield this.getAll();
+                const elemIndex = data.findIndex((elem) => elem['id'] === id);
+                if (elemIndex) {
+                    data[elemIndex] = Object.assign({ id: id }, element);
+                    yield fs.promises.writeFile(this._fileDir, JSON.stringify(data));
+                    cliSuccess(`Object with id ${id} updated!`);
+                    return data;
+                }
+            }
+            catch (err) {
+                cliError(err['message']);
+            }
+        });
+    }
+    /* ---------------- End update ---------------- */
     /* -------------- Begin getById ------------- */
     get(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const jsonData = JSON.parse(yield fs.promises.readFile(this._fileDir, 'utf8'));
-                const filteredData = jsonData.filter((elem) => elem['id'] === id);
-                cliSuccess(`Object with id ${id} retrieved!`);
-                return filteredData[0];
+                const data = yield this.getAll();
+                if (data.length > 0) {
+                    const element = data.find((elem) => elem['id'] === id);
+                    cliSuccess(`Object with id ${id} retrieved!`);
+                    return element;
+                }
             }
             catch (err) {
                 cliError(err['message']);
@@ -95,8 +116,8 @@ export default class Container {
     delete(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const jsonData = JSON.parse(yield fs.promises.readFile(this._fileDir, 'utf8'));
-                const jsonNewData = jsonData.filter((elem) => elem['id'] != id);
+                const data = yield this.getAll();
+                const jsonNewData = data.filter((elem) => elem['id'] != id);
                 yield fs.promises.writeFile(this._fileDir, JSON.stringify(jsonNewData));
                 cliSuccess(`Object with id ${id} deleted!`);
             }

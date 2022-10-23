@@ -1,13 +1,17 @@
 import express from 'express';
-import * as emoji from 'node-emoji';
-import { cliNotice, cliWarn } from './src/libs/index.js';
+import emoji from 'node-emoji';
+';;
+import { cliNotice, cliWarn, } from './src/libs/index.js';
 /* --------- //# Server Configuration --------- */
 const app = express();
 const PORT = process.env.PORT || 8080;
+app.use(express.static('public'));
+app.use(express.json());
+app.use('/api/products', router);
 /* ---------------- //# Routes ---------------- */
 app.get('/', (req, res) => {
-    res.sendFile('../client/public/index.html');
     cliWarn(`A request was made on path ${req.url}`);
+    res.sendFile(`/index.html`);
 });
 /* ------------- //# Raise Server ------------- */
 app.listen(PORT, () => {

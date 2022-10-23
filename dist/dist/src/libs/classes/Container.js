@@ -17,7 +17,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { cliError, cliNotice, cliSuccess } from "../functions";
+import { cliError, cliNotice, cliSuccess } from "../functions/index.js";
 import * as fs from "fs";
 export default class Container {
     constructor(fileDir) {
