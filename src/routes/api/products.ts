@@ -32,7 +32,7 @@ router.get('/:id', async (
     if (product){
       res.json({
         message: `Product with id ${id} found`,
-        product: product
+        response: product
       });
     } else {
       cliWarn(`Product with id ${id} not found!`);
@@ -75,7 +75,7 @@ router.put('/:id', async (
         const newProducts = await productsContainer.update(parseInt(id), newData);
         res.json({
           message:`Product with id ${id} updated`,
-          products: newProducts
+          response: newProducts
         })
       } else {
         cliWarn(`Product with id ${id} not found!`);
@@ -100,7 +100,7 @@ router.delete('/:id', async (
         const newProducts = await productsContainer.delete(parseInt(id));
         res.json({
           message:`Product with id ${id} deleted`,
-          products: newProducts
+          response: newProducts
         })
       } else {
         cliWarn(`Product with id ${id} not found!`);

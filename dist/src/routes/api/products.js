@@ -29,7 +29,7 @@ router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (product) {
             res.json({
                 message: `Product with id ${id} found`,
-                product: product
+                response: product
             });
         }
         else {
@@ -67,7 +67,7 @@ router.put('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             const newProducts = yield productsContainer.update(parseInt(id), newData);
             res.json({
                 message: `Product with id ${id} updated`,
-                products: newProducts
+                response: newProducts
             });
         }
         else {
@@ -90,7 +90,7 @@ router.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* 
             const newProducts = yield productsContainer.delete(parseInt(id));
             res.json({
                 message: `Product with id ${id} deleted`,
-                products: newProducts
+                response: newProducts
             });
         }
         else {
