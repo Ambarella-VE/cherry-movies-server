@@ -1,6 +1,6 @@
 import {
   cliError, cliNotice, cliSuccess 
-} from "../functions";
+} from "../functions/index.js";
 import * as fs from "fs";
 
 export default class Container {
@@ -21,28 +21,28 @@ export default class Container {
   async readOrCreateFile (): Promise<void> {
     try {
       await fs.promises.readFile(this._fileDir,'utf8')
-    } catch (err) {
-      if (err.code === 'ENOENT'){
-        cliNotice(`File ${this._fileDir} does not exists\n${err.message}`);
+    } catch (err: any) {
+      if (err['code'] === 'ENOENT'){
+        cliNotice(`File ${this._fileDir} does not exists\n${err['message']}`);
         fs.promises.writeFile(this._fileDir,'[]','utf8');
         cliSuccess(`New file ${this._fileDir} created`);
       } else {
-        cliError(`Error Code: ${err.code} | There was an unexpected error when trying to read ${this._fileDir}\n${err.message}`);
+        cliError(`Error Code: ${err['code']} | There was an unexpected error when trying to read ${this._fileDir}\n${err['message']}`);
       }
     } 
   }
   /* ---------- End readOrCreateFile ---------- */
 
   /* --------------- Begin save --------------- */
-  async save(data): Promise<number> {
+  async save(data: object): Promise<number|undefined> {
     try {
-      const jsonData = JSON.parse(
+      const jsonData: Array<object> = JSON.parse(
         await fs.promises.readFile(this._fileDir,'utf8')
       );
-      const newData = data;
+      const newData: any = data;
       if (jsonData.length) {
-        const lastItem = jsonData[jsonData.length - 1];
-        const lastId = lastItem.id ? lastItem.id : undefined;
+        const lastItem: any = jsonData[jsonData.length - 1];
+        const lastId: any | undefined = lastItem['id'] ? lastItem['id'] : undefined;
         newData["id"] = lastId ? lastId + 1: 1;
       } else {
         newData["id"] = 1;
@@ -51,47 +51,47 @@ export default class Container {
       jsonNewData.push(newData);
       await fs.promises.writeFile(this._fileDir,JSON.stringify(jsonNewData));
       cliSuccess('Product saved!')
-      return await newData["id"];
-    } catch (err) {
-      cliError(err.message)
+      return await newData['id'];
+    } catch (err: any) {
+      cliError(err['message'])
     }
   }
   /* ---------------- End save ---------------- */
 
   /* -------------- Begin getById ------------- */
-  async get(id): Promise<unknown> {
+  async get(id: number): Promise<any> {
     try {
       const jsonData = JSON.parse(await fs.promises.readFile(this._fileDir,'utf8'));
-      const filteredData = jsonData.filter((elem) => elem.id === id);
+      const filteredData = jsonData.filter((elem: any) => elem['id'] === id);
       cliSuccess(`Object with id ${id} retrieved!`);
       return filteredData[0];
-    } catch (err) {
-      cliError(err.message);
+    } catch (err: any) {
+      cliError(err['message']);
     }
   }
   /* --------------- End getById -------------- */
 
   /* -------------- Begin getAll -------------- */
-  async getAll(): Promise<unknown> {
+  async getAll(): Promise<any> {
     try {
       const jsonData = JSON.parse(await fs.promises.readFile(this._fileDir,'utf8'));
       cliSuccess('Array retrieved!');
       return jsonData
-    } catch (err) {
-      cliError(err.message);
+    } catch (err: any) {
+      cliError(err['message']);
     }
   }
   /* --------------- End getAll --------------- */
 
   /* ------------ Begin deleteById ------------ */
-  async delete(id): Promise<void>{
+  async delete(id: number): Promise<void>{
     try {
       const jsonData  = JSON.parse(await fs.promises.readFile(this._fileDir,'utf8'));
-      const jsonNewData = jsonData.filter((elem) => elem.id != id);
+      const jsonNewData = jsonData.filter((elem: any) => elem['id'] != id);
       await fs.promises.writeFile(this._fileDir, JSON.stringify(jsonNewData));
       cliSuccess(`Object with id ${id} deleted!`);
-    } catch (err) {
-      cliError(err.message);
+    } catch (err: any) {
+      cliError(err['message']);
     }
   }
   /* ------------- End deleteById ------------- */
@@ -101,8 +101,8 @@ export default class Container {
     try {
       await fs.promises.unlink(this._fileDir);
       cliSuccess('Array deleted!');
-    } catch (err) {
-      cliError(err.message);
+    } catch (err: any) {
+      cliError(err['message']);
     } finally {
       fs.promises.writeFile(this._fileDir,'[]','utf8')
       cliSuccess(`File ${this._fileDir} cleared`);

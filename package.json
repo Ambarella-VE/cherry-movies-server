@@ -11,10 +11,12 @@
     "url": "https://github.com/Ambarella-VE/cherry-movies-server.git"
   },
   "devDependencies": {
+    "@types/body-parser": "^1.19.2",
     "@types/cli-color": "^2.0.2",
     "@types/eslint": "^8.4.7",
     "@types/express": "^4.17.14",
     "@types/express-serve-static-core": "^4.17.31",
+    "@types/jest": "^29.2.0",
     "@types/node": "^18.11.3",
     "@types/node-emoji": "^1.8.2",
     "@types/nodemon": "^1.19.2",
@@ -22,6 +24,7 @@
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "@yarnpkg/pnpify": "^4.0.0-rc.26",
+    "body-parser": "^1.20.1",
     "eslint": "^8.26.0",
     "nodemon": "^2.0.20",
     "ts-loader": "^9.4.1",
@@ -32,11 +35,14 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev-server": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"nodemon ./dist/server.js\""
+    "dev-server": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"nodemon\""
   },
   "dependencies": {
     "cli-color": "^2.0.3",
     "express": "^4.18.2",
-    "node-emoji": "^1.11.0"
+    "fs": "^0.0.1-security",
+    "node-emoji": "^1.11.0",
+    "path": "^0.12.7",
+    "url": "^0.11.0"
   }
 }

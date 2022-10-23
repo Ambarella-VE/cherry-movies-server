@@ -4,14 +4,22 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES6",
-    "rootDir": "src",
-    "baseUrl": "./",
+    "noImplicitAny": true,
+    "allowJs": true,
+    "strict": true,
+    "watch": true,
+    "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist",
     "skipLibCheck": true,
-    "paths": {
-      "*": [".yarn/cache/*"]
+    "baseUrl": ".",
+    "paths":{
+      "*":[
+        "./dist",
+        "./.yarn/*",
+        "./src/*"
+      ]
     }
   },
   "lib": ["ES6"]

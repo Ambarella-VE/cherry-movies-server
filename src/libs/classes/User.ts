@@ -1,4 +1,4 @@
-import {toTitleCase} from '../functions'
+import {toTitleCase} from '../functions/index.js'
 
 export default class User {
   _firstName: string
