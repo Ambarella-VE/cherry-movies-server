@@ -19,7 +19,6 @@ router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (err) {
         cliError(err['message']);
-        res.status(500).send('Server Error');
     }
 }));
 router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -42,28 +41,68 @@ router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
     catch (err) {
         cliError(err['message']);
-        res.status(500).send('Server Error');
     }
 }));
 router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     cliNotice('Server request received...');
-    const newProduct = req.body;
-    const id = yield productsContainer.save(newProduct);
-    res.json({
-        message: `Product saved with id ${id}`,
-        response: id
-    });
+    try {
+        const newProduct = req.body;
+        const id = yield productsContainer.save(newProduct);
+        res.json({
+            message: `Product saved with id ${id}`,
+            response: id
+        });
+    }
+    catch (err) {
+        cliError(err['message']);
+    }
 }));
 router.put('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     cliNotice('Server request received...');
-    //TODO: Receive and update a product from id, if product does not exist return {error: "Product not found"
-    const { id };
+    const { id } = req.params;
     const newData = req.body;
-    productsContainer;
+    try {
+        const product = yield productsContainer.get(parseInt(id));
+        if (product) {
+            const newProducts = yield productsContainer.update(parseInt(id), newData);
+            res.json({
+                message: `Product with id ${id} updated`,
+                products: newProducts
+            });
+        }
+        else {
+            cliWarn(`Product with id ${id} not found!`);
+            res.status(404).json({
+                message: `Product with id ${id} not found`,
+            });
+        }
+    }
+    catch (err) {
+        cliError(err['message']);
+    }
 }));
 router.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     cliNotice('Server request received...');
-    //TODO: Receive and update a product from id, if product does not exist return {error: "Product not found"
+    const { id } = req.params;
+    try {
+        const product = yield productsContainer.get(parseInt(id));
+        if (product) {
+            const newProducts = yield productsContainer.delete(parseInt(id));
+            res.json({
+                message: `Product with id ${id} deleted`,
+                products: newProducts
+            });
+        }
+        else {
+            cliWarn(`Product with id ${id} not found!`);
+            res.status(404).json({
+                message: `Product with id ${id} not found`,
+            });
+        }
+    }
+    catch (err) {
+        cliError(err['message']);
+    }
 }));
 export default router;
 //# sourceMappingURL=products.js.map
