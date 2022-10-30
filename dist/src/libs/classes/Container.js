@@ -7,18 +7,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { cliError, cliNotice, cliSuccess } from "../functions/index.js";
+import { cliError, cliNotice, cliSuccess, getTimestamp } from "../functions/index.js";
 import * as fs from "fs";
 export default class Container {
-    constructor(fileDir) {
+    constructor(fileDir, fields) {
         this._fileDir = fileDir;
-        this.readOrCreateFile();
+        this._fields = fields;
+        this._readOrCreateFile();
     }
     /* ------------------------------------------ */
     /*                   Methods                  */
     /* ------------------------------------------ */
-    /* --------- Begin readOrCreateFile --------- */
-    readOrCreateFile() {
+    /* --------- Begin _readOrCreateFile --------- */
+    _readOrCreateFile() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 yield fs.promises.readFile(this._fileDir, 'utf8');
@@ -26,7 +27,7 @@ export default class Container {
             catch (err) {
                 if (err['code'] === 'ENOENT') {
                     cliNotice(`File ${this._fileDir} does not exists\n${err['message']}`);
-                    this.createFile();
+                    this._createFile();
                 }
                 else {
                     cliError(`Error Code: ${err['code']} | There was an unexpected error when trying to read ${this._fileDir}\n${err['message']}`);
@@ -34,37 +35,55 @@ export default class Container {
             }
         });
     }
-    /* ---------- End readOrCreateFile ---------- */
-    /* ------------ Begin createFile ------------ */
-    createFile() {
+    /* ---------- End _readOrCreateFile ---------- */
+    /* ------------ Begin _createFile ------------ */
+    _createFile() {
         return __awaiter(this, void 0, void 0, function* () {
             yield fs.promises.writeFile(this._fileDir, '[]', 'utf8');
             cliSuccess(`New file ${this._fileDir} created`);
         });
     }
-    /* ------------- End createFile ------------- */
+    /* ------------- End _createFile ------------- */
+    /* ------------- Begin keysExist ------------ */
+    _fieldsExist(data) {
+        const dataKeys = Object.keys(data);
+        let fieldsExist = true;
+        dataKeys.forEach((key) => {
+            if (!this._fields.includes(key)) {
+                fieldsExist = false;
+            }
+        });
+        return fieldsExist;
+    }
+    /* -------------- End keysExist ------------- */
     /* --------------- Begin save --------------- */
     save(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const jsonData = JSON.parse(yield fs.promises.readFile(this._fileDir, 'utf8'));
-                const newData = data;
-                if (jsonData.length) {
-                    const lastItem = jsonData[jsonData.length - 1];
-                    const lastId = lastItem['id'] ? lastItem['id'] : undefined;
-                    newData["id"] = lastId ? lastId + 1 : 1;
+            if (this._fieldsExist(data)) {
+                try {
+                    const jsonData = JSON.parse(yield fs.promises.readFile(this._fileDir, 'utf8'));
+                    const newData = data;
+                    if (jsonData.length) {
+                        const lastItem = jsonData[jsonData.length - 1];
+                        const lastId = lastItem['id'] ? lastItem['id'] : undefined;
+                        newData["id"] = lastId ? lastId + 1 : 1;
+                    }
+                    else {
+                        newData["id"] = 1;
+                    }
+                    newData["timestamp"] = getTimestamp();
+                    const jsonNewData = jsonData;
+                    jsonNewData.push(newData);
+                    yield fs.promises.writeFile(this._fileDir, JSON.stringify(jsonNewData));
+                    cliSuccess('Object saved!');
+                    return yield newData['id'];
                 }
-                else {
-                    newData["id"] = 1;
+                catch (err) {
+                    cliError(err['message']);
                 }
-                const jsonNewData = jsonData;
-                jsonNewData.push(newData);
-                yield fs.promises.writeFile(this._fileDir, JSON.stringify(jsonNewData));
-                cliSuccess('Product saved!');
-                return yield newData['id'];
             }
-            catch (err) {
-                cliError(err['message']);
+            else {
+                return undefined;
             }
         });
     }
@@ -72,18 +91,23 @@ export default class Container {
     /* --------------- Begin update --------------- */
     update(id, element) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const data = yield this.getAll();
-                const elemIndex = data.findIndex((elem) => elem['id'] === id);
-                if (elemIndex) {
-                    data[elemIndex] = Object.assign({ id: id }, element);
-                    yield fs.promises.writeFile(this._fileDir, JSON.stringify(data));
-                    cliSuccess(`Object with id ${id} updated!`);
-                    return data;
+            if (this._fieldsExist(element)) {
+                try {
+                    const data = yield this.getAll();
+                    const elemIndex = data.findIndex((elem) => elem['id'] === id);
+                    if (elemIndex) {
+                        data[elemIndex] = Object.assign({ id: id }, element);
+                        yield fs.promises.writeFile(this._fileDir, JSON.stringify(data));
+                        cliSuccess(`Object with id ${id} updated!`);
+                        return data;
+                    }
+                }
+                catch (err) {
+                    cliError(err['message']);
                 }
             }
-            catch (err) {
-                cliError(err['message']);
+            else {
+                return undefined;
             }
         });
     }
