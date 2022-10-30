@@ -14,7 +14,13 @@ const router = Router();
 router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const products = yield productsContainer.getAll();
-        res.send(products);
+        if (products) {
+            const msg200 = `Products retrieved successfully`;
+            res.status(200).json({
+                message: msg200,
+                response: products
+            });
+        }
     }
     catch (err) {
         cliError(err['message'] || err);
@@ -25,15 +31,18 @@ router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const product = yield productsContainer.get(parseInt(id));
         if (product) {
+            const msg200 = `Product with id ${id} found`;
+            cliWarn(msg200);
             res.status(200).json({
-                message: `Product with id ${id} found`,
+                message: msg200,
                 response: product
             });
         }
         else {
-            cliWarn(`Product with id ${id} not found!`);
+            const msg404 = `Product with id ${id} not found!`;
+            cliWarn(msg404);
             res.status(404).json({
-                message: `Product with id ${id} not found`,
+                message: msg404,
             });
         }
     }
@@ -45,10 +54,21 @@ router.post('/', isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, functi
     try {
         const newProduct = req.body;
         const id = yield productsContainer.save(newProduct);
-        res.json({
-            message: `Product saved with id ${id}`,
-            response: id
-        });
+        if (id) {
+            const msg200 = `Product saved with id ${id}`;
+            cliWarn(msg200);
+            res.status(200).json({
+                message: msg200,
+                response: id
+            });
+        }
+        else {
+            const msg404 = `Product not saved`;
+            cliWarn(msg404);
+            res.status(404).json({
+                message: msg404
+            });
+        }
     }
     catch (err) {
         cliError(err['message'] || err);
@@ -61,13 +81,16 @@ router.put('/:id', isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, func
         const product = yield productsContainer.get(parseInt(id));
         if (product) {
             const newProducts = yield productsContainer.update(parseInt(id), newData);
-            res.json({
-                message: `Product with id ${id} updated`,
+            const msg200 = `Product with id ${id} updated`;
+            cliWarn(msg200);
+            res.status(200).json({
+                message: msg200,
                 response: newProducts
             });
         }
         else {
-            cliWarn(`Product with id ${id} not found!`);
+            const msg404 = `Product with id ${id} not found!`;
+            cliWarn(msg404);
             res.status(404).json({
                 message: `Product with id ${id} not found`,
             });
@@ -83,15 +106,18 @@ router.delete('/:id', isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, f
         const product = yield productsContainer.get(parseInt(id));
         if (product) {
             const newProducts = yield productsContainer.delete(parseInt(id));
+            const msg200 = `Product with id ${id} deleted`;
+            cliWarn(msg200);
             res.json({
-                message: `Product with id ${id} deleted`,
+                message: msg200,
                 response: newProducts
             });
         }
         else {
-            cliWarn(`Product with id ${id} not found!`);
+            const msg404 = `Product with id ${id} not found!`;
+            cliWarn(msg404);
             res.status(404).json({
-                message: `Product with id ${id} not found`,
+                message: msg404,
             });
         }
     }

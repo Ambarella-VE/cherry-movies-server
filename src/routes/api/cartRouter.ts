@@ -20,10 +20,21 @@ router.post('/', async (
     }
     try {
       const id = await cartContainer.save(newCart);
-      res.json({
-        message: `Cart successfully created with id ${id}`,
-        response: id
-      })
+      const msg200 = `Cart successfully created with id ${id}`
+      const msg404 = `Cart was not created`;
+
+      if (id) {
+        cliWarn(msg200);
+        res.status(200).json({
+          message: msg200,
+          response: id
+        })
+      } else {
+        cliWarn(msg404);
+        res.status(404).json({
+          message: msg404
+        });
+      }
     } catch (err: any) {
       cliError(err['message'] || err);
     }
@@ -38,14 +49,17 @@ router.delete('/:id', async (
       const product: any = await cartContainer.get(parseInt(id));
       if (product){
         const newProducts = await cartContainer.delete(parseInt(id));
-        res.json({
-          message:`Cart with id ${id} deleted`,
+        const msg200 = `Cart with id ${id} successfully deleted`
+        cliWarn(msg200)
+        res.status(200).json({
+          message: msg200,
           response: newProducts
         })
       } else {
-        cliWarn(`Cart with id ${id} not found!`);
+        const msg404 = `Cart with id ${id} not found!`
+        cliWarn(msg404);
         res.status(404).json({
-          message: `Cart with id ${id} not found`,
+          message: msg404,
         })
       }
     } catch (err: any) {
@@ -62,14 +76,20 @@ router.get('/:id/products', async (
       const cart = await cartContainer.getAll();
       const products = cart['products'];
 
-      products
-      ? res.status(200).json({
-        message: `Products in cart id ${id}`,
-        response: products
-      })
-      : res.status(404).json({
-        message: `Cart with id ${id} not found`
-      });
+      if (products) {
+        const msg200 = `Products in cart id ${id}`
+        cliWarn(msg200)
+        res.status(200).json({
+          message: msg200,
+          response: products
+        })
+      } else {
+        const msg404 = `Cart with id ${id} not found!`;
+        cliWarn(msg404);
+        res.status(404).json({
+          message: msg404
+        });
+      }
     } catch (err: any) {
       cliError(err['message'] || err);
     }
@@ -88,16 +108,27 @@ router.post('/:id/products', async (
         newCart['products'].push(newCartProduct);
         const cartExists = await cartContainer.update(parseInt(id),newCart)
   
-        cartExists
-        ? res.status(200).json({
-          message: `Product with id ${idProduct} added successfully to the cart with id ${id}`,
+        if (cartExists) {
+          const msg200 = `Product with id ${idProduct} added successfully to the cart with id ${id}`;
+
+          cliWarn(msg200);
+          res.status(200).json({
+            message: msg200,
+          })
+        } else {
+          const msg404 = `Cart with id ${id} not found!`;
+          cliWarn(msg404)
+          res.status(404).json({
+            message: msg404
+          })
+        }
+      } else {
+        const msg404 = `Product with id ${idProduct} not found!`
+        cliWarn(msg404);
+        res.status(404).json({
+          message: msg404
         })
-        : res.status(404).json({
-          message: 'Cart not found'
-        })
-      } else res.status(404).json({
-        message: 'Product not found'
-      })
+      }
     } catch (err: any) {
       cliError(err['message'] || err);
     }
@@ -114,13 +145,19 @@ router.delete('/:id/products/:id_prod', async (
       if (productExist) {
         const cartExist = await cartContainer.get(parseInt(id));
 
-        cartExist
-        ? res.status(200).json({
-          message: `Product with id ${id_prod} was removed successfully from the cart with id ${id}`
-        })
-        : res.status(404).json({
-          message: `Cart with id ${id} not found`
-        });
+        if (cartExist) {
+          const msg200 = `Product with id ${id_prod} was removed successfully from the cart with id ${id}`
+          cliWarn(msg200);
+          res.status(200).json({
+            message: msg200
+          })
+        } else {
+          const msg404 = `Cart with id ${id} not found!`;
+          cliWarn(msg404);
+          res.status(404).json({
+            message: msg404
+          });
+        }
       }
     } catch (err: any) {
       cliError(err['message'] || err);

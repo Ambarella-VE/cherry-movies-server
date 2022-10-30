@@ -18,10 +18,21 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     };
     try {
         const id = yield cartContainer.save(newCart);
-        res.json({
-            message: `Cart successfully created with id ${id}`,
-            response: id
-        });
+        const msg200 = `Cart successfully created with id ${id}`;
+        const msg404 = `Cart was not created`;
+        if (id) {
+            cliWarn(msg200);
+            res.status(200).json({
+                message: msg200,
+                response: id
+            });
+        }
+        else {
+            cliWarn(msg404);
+            res.status(404).json({
+                message: msg404
+            });
+        }
     }
     catch (err) {
         cliError(err['message'] || err);
@@ -33,15 +44,18 @@ router.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const product = yield cartContainer.get(parseInt(id));
         if (product) {
             const newProducts = yield cartContainer.delete(parseInt(id));
-            res.json({
-                message: `Cart with id ${id} deleted`,
+            const msg200 = `Cart with id ${id} successfully deleted`;
+            cliWarn(msg200);
+            res.status(200).json({
+                message: msg200,
                 response: newProducts
             });
         }
         else {
-            cliWarn(`Cart with id ${id} not found!`);
+            const msg404 = `Cart with id ${id} not found!`;
+            cliWarn(msg404);
             res.status(404).json({
-                message: `Cart with id ${id} not found`,
+                message: msg404,
             });
         }
     }
@@ -54,14 +68,21 @@ router.get('/:id/products', (req, res) => __awaiter(void 0, void 0, void 0, func
     try {
         const cart = yield cartContainer.getAll();
         const products = cart['products'];
-        products
-            ? res.status(200).json({
-                message: `Products in cart id ${id}`,
+        if (products) {
+            const msg200 = `Products in cart id ${id}`;
+            cliWarn(msg200);
+            res.status(200).json({
+                message: msg200,
                 response: products
-            })
-            : res.status(404).json({
-                message: `Cart with id ${id} not found`
             });
+        }
+        else {
+            const msg404 = `Cart with id ${id} not found!`;
+            cliWarn(msg404);
+            res.status(404).json({
+                message: msg404
+            });
+        }
     }
     catch (err) {
         cliError(err['message'] || err);
@@ -76,18 +97,28 @@ router.post('/:id/products', (req, res) => __awaiter(void 0, void 0, void 0, fun
             const newCart = yield cartContainer.get(parseInt(id));
             newCart['products'].push(newCartProduct);
             const cartExists = yield cartContainer.update(parseInt(id), newCart);
-            cartExists
-                ? res.status(200).json({
-                    message: `Product with id ${idProduct} added successfully to the cart with id ${id}`,
-                })
-                : res.status(404).json({
-                    message: 'Cart not found'
+            if (cartExists) {
+                const msg200 = `Product with id ${idProduct} added successfully to the cart with id ${id}`;
+                cliWarn(msg200);
+                res.status(200).json({
+                    message: msg200,
                 });
+            }
+            else {
+                const msg404 = `Cart with id ${id} not found!`;
+                cliWarn(msg404);
+                res.status(404).json({
+                    message: msg404
+                });
+            }
         }
-        else
+        else {
+            const msg404 = `Product with id ${idProduct} not found!`;
+            cliWarn(msg404);
             res.status(404).json({
-                message: 'Product not found'
+                message: msg404
             });
+        }
     }
     catch (err) {
         cliError(err['message'] || err);
@@ -100,13 +131,20 @@ router.delete('/:id/products/:id_prod', (req, res) => __awaiter(void 0, void 0, 
         const productExist = yield productsContainer.get(parseInt(id_prod));
         if (productExist) {
             const cartExist = yield cartContainer.get(parseInt(id));
-            cartExist
-                ? res.status(200).json({
-                    message: `Product with id ${id_prod} was removed successfully from the cart with id ${id}`
-                })
-                : res.status(404).json({
-                    message: `Cart with id ${id} not found`
+            if (cartExist) {
+                const msg200 = `Product with id ${id_prod} was removed successfully from the cart with id ${id}`;
+                cliWarn(msg200);
+                res.status(200).json({
+                    message: msg200
                 });
+            }
+            else {
+                const msg404 = `Cart with id ${id} not found!`;
+                cliWarn(msg404);
+                res.status(404).json({
+                    message: msg404
+                });
+            }
         }
     }
     catch (err) {
