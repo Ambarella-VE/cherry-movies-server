@@ -1,5 +1,7 @@
 import express, { Router } from 'express';
-import productsContainer from '../../utils/products.js';
+import {
+  cartContainer
+} from '../../utils/containers/index.js';
 import {
   cliError,
   cliNotice,

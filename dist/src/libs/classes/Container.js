@@ -26,8 +26,7 @@ export default class Container {
             catch (err) {
                 if (err['code'] === 'ENOENT') {
                     cliNotice(`File ${this._fileDir} does not exists\n${err['message']}`);
-                    fs.promises.writeFile(this._fileDir, '[]', 'utf8');
-                    cliSuccess(`New file ${this._fileDir} created`);
+                    this.createFile();
                 }
                 else {
                     cliError(`Error Code: ${err['code']} | There was an unexpected error when trying to read ${this._fileDir}\n${err['message']}`);
@@ -36,6 +35,14 @@ export default class Container {
         });
     }
     /* ---------- End readOrCreateFile ---------- */
+    /* ------------ Begin createFile ------------ */
+    createFile() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield fs.promises.writeFile(this._fileDir, '[]', 'utf8');
+            cliSuccess(`New file ${this._fileDir} created`);
+        });
+    }
+    /* ------------- End createFile ------------- */
     /* --------------- Begin save --------------- */
     save(data) {
         return __awaiter(this, void 0, void 0, function* () {

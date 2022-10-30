@@ -1,5 +1,7 @@
 import {
-  cliError, cliNotice, cliSuccess 
+  cliError, 
+  cliNotice, 
+  cliSuccess 
 } from "../functions/index.js";
 import * as fs from "fs";
 
@@ -24,14 +26,20 @@ export default class Container {
     } catch (err: any) {
       if (err['code'] === 'ENOENT'){
         cliNotice(`File ${this._fileDir} does not exists\n${err['message']}`);
-        fs.promises.writeFile(this._fileDir,'[]','utf8');
-        cliSuccess(`New file ${this._fileDir} created`);
+        this.createFile();
       } else {
         cliError(`Error Code: ${err['code']} | There was an unexpected error when trying to read ${this._fileDir}\n${err['message']}`);
       }
     } 
   }
   /* ---------- End readOrCreateFile ---------- */
+
+  /* ------------ Begin createFile ------------ */
+  async createFile (): Promise<void> {
+    await fs.promises.writeFile(this._fileDir,'[]','utf8')
+    cliSuccess(`New file ${this._fileDir} created`);
+  }
+  /* ------------- End createFile ------------- */
 
   /* --------------- Begin save --------------- */
   async save(data: object): Promise<number|undefined> {

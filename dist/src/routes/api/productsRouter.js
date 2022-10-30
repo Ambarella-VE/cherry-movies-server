@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Router } from 'express';
-import productsContainer from '../../utils/products.js';
+import { productsContainer } from '../../utils/containers/index.js';
 import { cliError, cliNotice, cliWarn } from '../../libs/index.js';
 const router = Router();
 router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
