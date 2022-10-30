@@ -1,11 +1,11 @@
 import express, { Router } from 'express';
 import {
   productsContainer
-} from '../../utils/containers/index.js';
+} from '../../utils/index.js';
 import {
   cliError,
-  cliNotice,
-  cliWarn
+  cliWarn,
+  isAdmin
 } from '../../libs/index.js';
 
 const router = Router();
@@ -14,7 +14,6 @@ router.get('/', async (
   req: express.Request, 
   res: express.Response
   )=>{
-  cliNotice('Server request received...')
   try {
     const products: any = await productsContainer.getAll();
     res.send(products);
@@ -27,12 +26,11 @@ router.get('/:id', async (
   req: express.Request, 
   res: express.Response
   )=>{
-  cliNotice('Server request received...')
   const {id} = req.params;
   try {
     const product: any = await productsContainer.get(parseInt(id));
     if (product){
-      res.json({
+      res.status(200).json({
         message: `Product with id ${id} found`,
         response: product
       });
@@ -47,11 +45,10 @@ router.get('/:id', async (
   }
 });
 
-router.post('/', async (
+router.post('/', isAdmin, async (
   req: express.Request, 
   res: express.Response
   )=>{
-  cliNotice('Server request received...')
   try{
     const newProduct = req.body;
       const id = await productsContainer.save(newProduct);
@@ -64,11 +61,10 @@ router.post('/', async (
   }
 });
 
-router.put('/:id', async (
+router.put('/:id', isAdmin, async (
   req: express.Request, 
   res: express.Response
   )=>{
-    cliNotice('Server request received...')
     const {id} = req.params;
     const newData = req.body;
     try {
@@ -90,11 +86,10 @@ router.put('/:id', async (
     }  
 });
 
-router.delete('/:id', async (
+router.delete('/:id', isAdmin, async (
   req: express.Request,
   res: express.Response
   )=>{
-  cliNotice('Server request received...')
   const {id} = req.params;
     try {
       const product: any = await productsContainer.get(parseInt(id));

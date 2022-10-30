@@ -8,11 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Router } from 'express';
-import { productsContainer } from '../../utils/containers/index.js';
-import { cliError, cliNotice, cliWarn } from '../../libs/index.js';
+import { productsContainer } from '../../utils/index.js';
+import { cliError, cliWarn, isAdmin } from '../../libs/index.js';
 const router = Router();
 router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    cliNotice('Server request received...');
     try {
         const products = yield productsContainer.getAll();
         res.send(products);
@@ -22,12 +21,11 @@ router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 }));
 router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    cliNotice('Server request received...');
     const { id } = req.params;
     try {
         const product = yield productsContainer.get(parseInt(id));
         if (product) {
-            res.json({
+            res.status(200).json({
                 message: `Product with id ${id} found`,
                 response: product
             });
@@ -43,8 +41,7 @@ router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         cliError(err['message'] || err);
     }
 }));
-router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    cliNotice('Server request received...');
+router.post('/', isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newProduct = req.body;
         const id = yield productsContainer.save(newProduct);
@@ -57,8 +54,7 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         cliError(err['message'] || err);
     }
 }));
-router.put('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    cliNotice('Server request received...');
+router.put('/:id', isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const newData = req.body;
     try {
@@ -81,8 +77,7 @@ router.put('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         cliError(err['message'] || err);
     }
 }));
-router.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    cliNotice('Server request received...');
+router.delete('/:id', isAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
         const product = yield productsContainer.get(parseInt(id));

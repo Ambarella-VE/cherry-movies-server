@@ -1,10 +1,10 @@
 import express, { Router } from 'express';
 import {
-  cartContainer
-} from '../../utils/containers/index.js';
+  cartContainer,
+  productsContainer
+} from '../../utils/index.js';
 import {
   cliError,
-  cliNotice,
   cliWarn
 } from '../../libs/index.js';
 
@@ -14,10 +14,16 @@ router.post('/', async (
   req: express.Request, 
   res: express.Response
   )=>{
-    cliNotice('Server request received...')
-    //# TODO: Crea un carrito y devuelve su id.
+    const newCartProducts = req.body;
+    const newCart = {
+      "products": newCartProducts 
+    }
     try {
-      cliWarn('')
+      const id = await cartContainer.save(newCart);
+      res.json({
+        message: `Cart successfully created with id ${id}`,
+        response: id
+      })
     } catch (err: any) {
       cliError(err['message'] || err);
     }
@@ -27,12 +33,23 @@ router.delete('/:id', async (
   req: express.Request, 
   res: express.Response
   )=>{
-    cliNotice('Server request received...')
-    //# TODO: Vacía un carrito y lo elimina.
+    const {id} = req.params;
     try {
-      cliWarn('')
+      const product: any = await cartContainer.get(parseInt(id));
+      if (product){
+        const newProducts = await cartContainer.delete(parseInt(id));
+        res.json({
+          message:`Cart with id ${id} deleted`,
+          response: newProducts
+        })
+      } else {
+        cliWarn(`Cart with id ${id} not found!`);
+        res.status(404).json({
+          message: `Cart with id ${id} not found`,
+        })
+      }
     } catch (err: any) {
-      cliError(err['message'] || err);
+      cliError(err['message'] || err)
     }
   })
 
@@ -40,10 +57,19 @@ router.get('/:id/products', async (
   req: express.Request, 
   res: express.Response
   )=>{
-    cliNotice('Server request received...')
-    //# TODO: Me permite listar todos los productos guardados en el carrito.
+  const {id} = req.params;
     try {
-      cliWarn('')
+      const cart = await cartContainer.getAll();
+      const products = cart['products'];
+
+      products
+      ? res.status(200).json({
+        message: `Products in cart id ${id}`,
+        response: products
+      })
+      : res.status(404).json({
+        message: `Cart with id ${id} not found`
+      });
     } catch (err: any) {
       cliError(err['message'] || err);
     }
@@ -53,10 +79,25 @@ router.post('/:id/products', async (
   req: express.Request, 
   res: express.Response
   )=>{
-    cliNotice('Server request received...')
-    //# TODO: Para incorporar productos al carrito por su id de producto.
+    const {id} = req.params;
+    const idProduct: number = parseInt(req.body['id']);
     try {
-      cliWarn('')
+      const newCartProduct: object = await productsContainer.get(idProduct)
+      if(newCartProduct){
+        const newCart = await cartContainer.get(parseInt(id));
+        newCart['products'].push(newCartProduct);
+        const cartExists = await cartContainer.update(parseInt(id),newCart)
+  
+        cartExists
+        ? res.status(200).json({
+          message: `Product with id ${idProduct} added successfully to the cart with id ${id}`,
+        })
+        : res.status(404).json({
+          message: 'Cart not found'
+        })
+      } else res.status(404).json({
+        message: 'Product not found'
+      })
     } catch (err: any) {
       cliError(err['message'] || err);
     }
@@ -66,10 +107,21 @@ router.delete('/:id/products/:id_prod', async (
   req: express.Request, 
   res: express.Response
   )=>{
-    cliNotice('Server request received...')
     //# TODO: Eliminar un producto del carrito por su id de carrito y de producto.
+    const {id, id_prod} = req.params;
     try {
-      cliWarn('')
+    const productExist = await productsContainer.get(parseInt(id_prod));
+      if (productExist) {
+        const cartExist = await cartContainer.get(parseInt(id));
+
+        cartExist
+        ? res.status(200).json({
+          message: `Product with id ${id_prod} was removed successfully from the cart with id ${id}`
+        })
+        : res.status(404).json({
+          message: `Cart with id ${id} not found`
+        });
+      }
     } catch (err: any) {
       cliError(err['message'] || err);
     }
