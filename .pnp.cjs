@@ -43,6 +43,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnpify", "npm:4.0.0-rc.26"],\
             ["body-parser", "npm:1.20.1"],\
             ["cli-color", "npm:2.0.3"],\
+            ["date-fns", "npm:2.29.3"],\
             ["eslint", "npm:8.26.0"],\
             ["express", "npm:4.18.2"],\
             ["fs", "npm:0.0.1-security"],\
@@ -1612,6 +1613,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["d", "npm:1.0.1"],\
             ["es5-ext", "npm:0.10.62"],\
             ["type", "npm:1.2.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["date-fns", [\
+        ["npm:2.29.3", {\
+          "packageLocation": "./.yarn/cache/date-fns-npm-2.29.3-fef7e3c72c-e01cf5b62a.zip/node_modules/date-fns/",\
+          "packageDependencies": [\
+            ["date-fns", "npm:2.29.3"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -4093,6 +4103,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnpify", "npm:4.0.0-rc.26"],\
             ["body-parser", "npm:1.20.1"],\
             ["cli-color", "npm:2.0.3"],\
+            ["date-fns", "npm:2.29.3"],\
             ["eslint", "npm:8.26.0"],\
             ["express", "npm:4.18.2"],\
             ["fs", "npm:0.0.1-security"],\

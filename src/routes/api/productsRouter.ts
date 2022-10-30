@@ -17,7 +17,7 @@ router.get('/', async (
     const products: any = await productsContainer.getAll();
     res.send(products);
   } catch (err: any) {
-    cliError(err['message'])
+    cliError(err['message'] || err)
   }
 });
 
@@ -41,7 +41,7 @@ router.get('/:id', async (
       })
     }
   } catch (err: any) {
-    cliError(err['message'])
+    cliError(err['message'] || err)
   }
 });
 
@@ -58,7 +58,7 @@ router.post('/', async (
           response: id
       })
   } catch (err: any) {
-      cliError(err['message'])
+      cliError(err['message'] || err)
   }
 });
 
@@ -84,7 +84,7 @@ router.put('/:id', async (
         })
       }
     } catch (err: any) {
-      cliError(err['message'])
+      cliError(err['message'] || err)
     }  
 });
 
@@ -109,7 +109,7 @@ router.delete('/:id', async (
         })
       }
     } catch (err: any) {
-      cliError(err['message'])
+      cliError(err['message'] || err)
     }
 });
 

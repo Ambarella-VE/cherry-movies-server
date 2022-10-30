@@ -1,0 +1,1 @@
+{"version":3,"file":"getTimestamp.js","sourceRoot":"","sources":["../../../../src/libs/functions/getTimestamp.ts"],"names":[],"mappings":"AAAA,OAAO,EACL,MAAM,EACP,MAAM,UAAU,CAAA;AAEjB,MAAM,CAAC,OAAO,UAAU,YAAY;IAClC,MAAM,OAAO,GAAS,IAAI,IAAI,EAAE,CAAC;IACjC,MAAM,SAAS,GAAG,MAAM,CAAC,OAAO,EAAE,mBAAmB,CAAC,CAAA;IACtD,OAAO,SAAS,CAAA;AAClB,CAAC"}

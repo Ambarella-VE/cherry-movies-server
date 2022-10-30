@@ -1,9 +1,13 @@
 import express from 'express';
 import emoji from 'node-emoji';
-import productsRouter from './src/routes/api/products.js';
+import {
+  productsRouter,
+  cartRouter
+} from './src/routes/api/index.js';
 import {
   cliNotice, 
   cliWarn,
+  getTimestamp
 } from './src/libs/index.js';
 
 /* --------- //# Server Configuration --------- */
@@ -11,9 +15,22 @@ const app: express.Application = express();
 const PORT: string | number = process.env.PORT || 8080;
 app.use(express.static('public'));
 app.use(express.json());
-app.use('/api/products', productsRouter);
+
+
+app.use((
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction 
+)=>{
+  const timestamp: string = getTimestamp();
+  cliNotice(`[${timestamp}] Server request received...`);
+  next();
+})
 
 /* ---------------- //# Routes ---------------- */
+app.use('/api/products', productsRouter);
+app.use('/api/cart', cartRouter);
+
 app.get('/',(
   req: express.Request,
   res: express.Response,
